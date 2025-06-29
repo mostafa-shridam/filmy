@@ -1,10 +1,11 @@
 import 'package:filmy/core/controller/main_view_controller.dart';
-import 'package:filmy/features/home/presentation/views/widgets/main_view_body.dart';
 import 'package:filmy/features/home/presentation/views/widgets/search_category.dart';
 import 'package:filmy/features/home/presentation/views/widgets/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/models/main_view_model.dart';
+import 'main_view_body.dart';
 import 'movie_list_view.dart';
 
 class ForegroundWidget extends StatelessWidget {
@@ -92,7 +93,7 @@ class TopBarWidget extends StatelessWidget {
   }
 }
 
-class SelectCategoryWidget extends StatefulWidget {
+class SelectCategoryWidget extends ConsumerWidget {
   const SelectCategoryWidget(
       {super.key,
       required this.mainViewDataModel,
@@ -101,46 +102,37 @@ class SelectCategoryWidget extends StatefulWidget {
   final MainViewController mainViewController;
 
   @override
-  State<SelectCategoryWidget> createState() => _SelectCategoryWidgetState();
-}
-
-class _SelectCategoryWidgetState extends State<SelectCategoryWidget> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return DropdownButton(
-      onChanged: (value) => value.toString().isNotEmpty
-          ? widget.mainViewController.getMovies(
-              searchCategory: value.toString(),
-            )
-          : null,
-      value: widget.mainViewDataModel.searchCategory,
-      dropdownColor: Colors.black38,
-      onTap: () => widget.mainViewController.getMovies(
-        searchCategory: widget.mainViewDataModel.searchCategory,
+      value: ref.watch(mainViewDataControllerProvider).searchCategory,
+      dropdownColor: const Color(0xDD202020),
+      borderRadius: BorderRadius.circular(10),
+      hint: Text(
+        ref.watch(mainViewDataControllerProvider).searchCategory,
+        style: TextStyle(color: Colors.white),
       ),
-      items: const [
+      style: TextStyle(color: Colors.white),
+      items: [
         DropdownMenuItem(
           value: SearchCategory.popular,
-          enabled: false,
-          child: Text(
-            SearchCategory.popular,
-            style: TextStyle(color: Colors.white),
-          ),
+          onTap: () =>
+              ref.watch(mainViewDataControllerProvider.notifier).getMovies(
+                    searchCategory: SearchCategory.popular,
+                  ),
+          child: Text(SearchCategory.popular),
         ),
         DropdownMenuItem(
           value: SearchCategory.upcoming,
-          enabled: false,
-          child: Text(
-            SearchCategory.upcoming,
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        DropdownMenuItem(
-          value: SearchCategory.none,
-          enabled: false,
-          child: Text(SearchCategory.none),
+          onTap: () =>
+              ref.watch(mainViewDataControllerProvider.notifier).getMovies(
+                    searchCategory: SearchCategory.upcoming,
+                  ),
+          child: Text(SearchCategory.upcoming),
         ),
       ],
+      onChanged: (value) => mainViewController.getMovies(
+        searchCategory: value.toString(),
+      ),
     );
   }
 }

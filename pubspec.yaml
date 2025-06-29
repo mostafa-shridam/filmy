@@ -35,11 +35,15 @@ dependencies:
   flutter_getit: ^3.0.1
   flutter_riverpod: ^2.6.1
   get_it: ^7.7.0
+  video_player: ^2.8.3
+  chewie: ^1.7.5
 
 dev_dependencies:
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.3
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -54,6 +58,28 @@ flutter:
   assets:
     - assets/images/
     - assets/config/
+
+  # dart run flutter_launcher_icons:main
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path_ios: "assets/images/Logo.png"
+
+  image_path: "assets/images/Logo.png"
+
+  web:
+    generate: true
+    image_path: "assets/images/Logo.png"
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
+  windows:
+    generate: true
+    image_path: "assets/images/Logo.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/images/Logo.png"   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
   # For details regarding adding assets from package dependencies, see

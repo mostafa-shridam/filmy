@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../core/models/movie_model.dart';
+import '../../../../../features/video_player/presentation/views/video_player_screen.dart';
 
 class MovieTile extends StatelessWidget {
   final GetIt getIt = GetIt.instance;
@@ -10,16 +11,16 @@ class MovieTile extends StatelessWidget {
     required this.movie,
     required this.deviceHeight,
     required this.deviceWidth,
+    required this.onTap,
   });
+  final Function() onTap;
   final MovieModel movie;
   final double deviceHeight;
   final double deviceWidth;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector( 
-      onTap: () {
-        
-      },
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
         padding: EdgeInsets.only(bottom: deviceHeight * 0.02),
         width: double.infinity,
@@ -31,19 +32,43 @@ class MovieTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              height: deviceHeight * 0.28,
-              width: deviceWidth * 0.38,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadiusDirectional.only(
-                  topStart: Radius.circular(6),
-                  bottomStart: Radius.circular(6),
+            Stack(
+              children: [
+                Container(
+                  height: deviceHeight * 0.28,
+                  width: deviceWidth * 0.38,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadiusDirectional.only(
+                      topStart: Radius.circular(6),
+                      bottomStart: Radius.circular(6),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(movie.posterUrl()),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                image: DecorationImage(
-                  image: NetworkImage(movie.posterUrl()),
-                  fit: BoxFit.cover,
-                ),
-              ),
+                if (movie.videoUrl != null)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: () => _playVideo(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withAlpha(120),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             Expanded(
               child: Container(
@@ -121,5 +146,26 @@ class MovieTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _playVideo(BuildContext context) {
+    if (movie.videoUrl != null) {
+      Navigator.pushNamed(
+        context,
+        VideoPlayerScreen.routeName,
+        arguments: {
+          'videoUrl': movie.videoUrl!,
+          'title': movie.title,
+          'posterUrl': movie.posterUrl(),
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('لا يوجد فيديو متاح لهذا الفيلم'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

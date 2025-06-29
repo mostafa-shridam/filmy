@@ -1,19 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SearchTextField extends StatelessWidget {
+import 'main_view_body.dart';
+
+class SearchTextField extends ConsumerStatefulWidget {
   const SearchTextField(
       {super.key, required this.deviceHeight, required this.deviceWidth});
   final double deviceHeight;
   final double deviceWidth;
+
+  @override
+  ConsumerState<SearchTextField> createState() => _SearchTextFieldState();
+}
+
+class _SearchTextFieldState extends ConsumerState<SearchTextField> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
     const border = InputBorder.none;
     return SizedBox(
-      height: deviceHeight * 0.05,
-      width: deviceWidth * 0.50,
+      height: widget.deviceHeight * 0.05,
+      width: widget.deviceWidth * 0.50,
       child: TextField(
         controller: controller,
+        onChanged: (value) {
+          ref
+              .read(mainViewDataControllerProvider.notifier)
+              .searchMovie(searchText: value);
+        },
         decoration: const InputDecoration(
             filled: false,
             hintText: 'Search...',
@@ -24,7 +51,11 @@ class SearchTextField extends StatelessWidget {
               color: Colors.white60,
             )),
         cursorColor: Colors.white,
-        onSubmitted: (value) {},
+        onSubmitted: (value) {
+          ref
+              .read(mainViewDataControllerProvider.notifier)
+              .searchMovie(searchText: value);
+        },
         style: const TextStyle(
           color: Colors.white54,
         ),

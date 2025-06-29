@@ -6,30 +6,35 @@ class MainViewDataModel {
   final String searchCategory;
   final String searchText;
   final int page;
+  final bool isLoading;
 
   MainViewDataModel({
     required this.movieModel,
     required this.searchCategory,
     required this.searchText,
     required this.page,
+    required this.isLoading,
   });
   MainViewDataModel.intial()
       : movieModel = [],
         searchCategory = SearchCategory.popular,
         searchText = "",
-        page = 1;
+        page = 1,
+        isLoading = false;
 
   MainViewDataModel copyWith({
     List<MovieModel>? movieModel,
     String? searchCategory,
     String? searchText,
     int? page,
+    bool? isLoading,
   }) {
     return MainViewDataModel(
       movieModel: movieModel ?? this.movieModel,
       searchCategory: searchCategory ?? this.searchCategory,
       searchText: searchText ?? this.searchText,
       page: page ?? this.page,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }

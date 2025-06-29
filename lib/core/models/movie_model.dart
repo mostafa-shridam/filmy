@@ -10,6 +10,7 @@ class MovieModel {
   final String releaseDate;
   final bool isAdult;
   final num rating;
+  final String? videoUrl;
 
   MovieModel({
     required this.title,
@@ -20,23 +21,33 @@ class MovieModel {
     required this.releaseDate,
     required this.isAdult,
     required this.rating,
+    this.videoUrl,
   });
 
   factory MovieModel.fromJson(Map<String, dynamic> json) {
     return MovieModel(
-      title: json['title'],
-      language: json['original_language'],
-      overview: json['overview'],
-      posterPath: json['poster_path'],
-      backdropPath: json['backdrop_path'],
-      releaseDate: json['release_date'],
-      isAdult: json['adult'],
-      rating: json['vote_average'],
+      title: json['title']?.toString() ?? 'Unknown Title',
+      language: json['original_language']?.toString() ?? 'en',
+      overview: json['overview']?.toString() ?? 'No overview available',
+      posterPath: json['poster_path']?.toString() ?? '',
+      backdropPath: json['backdrop_path']?.toString() ?? '',
+      releaseDate: json['release_date']?.toString() ?? 'Unknown',
+      isAdult: json['adult']?.toString().toLowerCase() == 'true' ||
+          json['adult'] == true,
+      rating: json['vote_average']?.toDouble() ?? 0.0,
+      videoUrl: json['video_url']?.toString(),
     );
   }
 
   String posterUrl() {
     final AppConfigModel appConfig = GetIt.instance.get<AppConfigModel>();
+    if (posterPath.isEmpty) {
+      return 'https://via.placeholder.com/300x450?text=No+Image';
+    }
     return "${appConfig.baseImageApiUrl}$posterPath";
+  }
+
+  String? getVideoUrl() {
+    return videoUrl;
   }
 }
